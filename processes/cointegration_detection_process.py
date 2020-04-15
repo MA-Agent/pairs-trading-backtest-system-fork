@@ -22,6 +22,3 @@ class CointegrationDetectionProcess:
 
     def results_path(self):
         return 'cointegrated.json'
-
-if __name__ == '__main__':
-    CointegrationDetectionProcess().run()
