@@ -10,7 +10,7 @@ class CointegrationDetectionProcess:
         while True:
             pair_names = []
             selected_pairs = self.pair_selection_service.selected_pairs(
-                1, '5m'
+                1, '1m'
             )
             for pair in selected_pairs.keys():
                 pair_names.append(pair)
@@ -21,4 +21,7 @@ class CointegrationDetectionProcess:
             time.sleep(5*60)
 
     def results_path(self):
-        return 'processes/coint_results.json'
+        return 'cointegrated.json'
+
+if __name__ == '__main__':
+    CointegrationDetectionProcess().run()
