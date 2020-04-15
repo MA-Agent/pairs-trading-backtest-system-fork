@@ -130,7 +130,7 @@ class Realtime:
                 )
 
                 if helper.currently_trading(self.current_trade):
-                        self.close_trade(
+                    self.close_trade(
                         p_val,
                         zscore,
                         ticker_data_a,
