@@ -108,6 +108,7 @@ class Realtime:
 
     def run(self, asset_a, asset_b):
         self.setup_pass(asset_a, asset_b)
+        prev_trades = 0
 
         while True:
             # try:
@@ -137,7 +138,6 @@ class Realtime:
                         ticker_data_b,
                         hedge
                     )
-                    send_telegram(asset_a + '|' + asset_b + ', holding: ' + str(self.wallet.holdings['btc']) + ', num_trades: ' + str(self.num_trades) + ', ' + asset_a +': ' + str(self.wallet.holdings['a']) + ', price: ' + str("%.8f" % ticker_data_a['avg_price']) + ', ' + asset_a +': ' + str(self.wallet.holdings['b']) + ', price: ' + str("%.8f" % ticker_data_b['avg_price']))                        
                 else:
                     self.open_trade(
                         p_val,
@@ -152,8 +152,8 @@ class Realtime:
 
                 print('pass ' + str(self.pass_number))
                 print('holdings (BTC): ', self.wallet.holdings['btc'])
-                print('holidings (Asset A): ', self.wallet.holdings['a'])
-                print('holidings (Asset B): ', self.wallet.holdings['b'])
+                print('holidings (Asset A): ', self.wallet.holdings['a'], "%.8f" % ticker_data_a['avg_price'])
+                print('holidings (Asset B): ', self.wallet.holdings['b'], "%.8f" % ticker_data_b['avg_price'])
                 print('zscore:', zscore)
                 print('hedge:', hedge)
                 print('-'*20)
@@ -165,6 +165,10 @@ class Realtime:
                     'num_trades': self.num_trades,
                     'timestamp': datetime.datetime.now().timestamp()
                 }
+                if prev_trades != self.num_trades:
+                    send_telegram(asset_a + '|' + asset_b + ', holding: ' + str(self.wallet.holdings['btc']) + ', num_trades: ' + str(self.num_trades) + ', ' + asset_a +': ' + str(self.wallet.holdings['a']) + ', price: ' + str("%.8f" % ticker_data_a['avg_price']) + ', ' + asset_a +': ' + str(self.wallet.holdings['b']) + ', price: ' + str("%.8f" % ticker_data_b['avg_price']))                        
+                    prev_trades = self.num_trades
+
                 # with open('realtime_results.json', 'r') as f:
                     # results_list = json.load(f)
                     # results_list.append(result)
