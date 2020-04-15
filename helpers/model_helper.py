@@ -6,6 +6,12 @@ import matplotlib.pyplot as plt
 import json
 import time
 import pandas as pd
+import requests
+
+def send_telegram(text):
+    url = 'https://integram.org/webhook/cwVRVYBjDYC'
+    data = {"text": text}
+    r = requests.post(url, verify=False, json=data)
 
 def simple_hedge(prices_a, prices_b):
     # returns_a = prices_a.pct_change()[1:]

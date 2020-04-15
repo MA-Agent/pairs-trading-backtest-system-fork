@@ -29,9 +29,13 @@ class PairSelectionService:
 
     def selected(self, asset_prices, possible_pairs):
         selected_pairs = {}
+        cointegrated_pairs = []
+        with open('cointegrated.json', 'r+') as f:
+            # f.write(asset_a+'|'+asset_b+'\n')
+            cointegrated_pairs = f.read().splitlines()
 
         for paired_assets in possible_pairs:
-            print('analysing', paired_assets)
+            # print('analysing', paired_assets)
             asset_a, asset_b = paired_assets
             prices_a = asset_prices[asset_a]
             prices_b = asset_prices[asset_b]
@@ -42,13 +46,17 @@ class PairSelectionService:
                 continue
 
             try:
-                if self.displays_cointegration(prices_a[-320:], prices_b[-320:]) and 0.85 <= ratio <= 1.15:
-                    print('  - pair', paired_assets, 'shows cointegration with ratio of: ', ratio)
+                # if self.displays_cointegration(prices_a[-320:], prices_b[-320:]) and 0.85 <= ratio <= 1.15:
+                if asset_a+'|'+asset_b in cointegrated_pairs:
+                    # print('  - pair', paired_assets, 'shows cointegration with ratio of: ', ratio)
+                    print('  - pair', paired_assets, 'shows cointegration')
                     selected_pairs[asset_a+'|'+asset_b] = {
                         'prices_a': prices_a,
                         'prices_b': prices_b,
                         'avg_ratio': ratio
                     }
+                    # with open('cointegrated.json', 'a') as f:
+                        # f.write(asset_a+'|'+asset_b+'\n')
             except:
                 continue
         return selected_pairs

@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from wallet import Wallet
 import datetime
 import json
+from  helpers.model_helper import send_telegram
 
 class Realtime:
     def __init__(self):
@@ -110,7 +111,7 @@ class Realtime:
 
         while True:
             # try:
-                historic_prices = self.price_service.historic_prices(1, '5m', [asset_a, asset_b])
+                historic_prices = self.price_service.historic_prices(1, '1m', [asset_a, asset_b])
                 historic_prices_a = historic_prices[asset_a][-80:]
                 historic_prices_b = historic_prices[asset_b][-80:]
 
@@ -163,13 +164,15 @@ class Realtime:
                     'num_trades': self.num_trades,
                     'timestamp': datetime.datetime.now().timestamp()
                 }
-                with open('realtime_results.json', 'r') as f:
-                    results_list = json.load(f)
-                    results_list.append(result)
-                with open('realtime_results.json', 'w') as f:
-                    json.dump(results_list, f)
+                # with open('realtime_results.json', 'r') as f:
+                    # results_list = json.load(f)
+                    # results_list.append(result)
+                # with open('realtime_results.json', 'w') as f:
+                    # json.dump(results_list, f)
+                if  self.wallet.holdings['a'] != 0: 
+                    send_telegram(result['pair'] + ', holding: ' + str(result['holdings']) + ', num_trades: ' + str(result['num_trades']) + ', YOYO: ' + str(self.wallet.holdings['a']) + ', price: ' + str(ticker_data_a['avg_price']) + ', REQ: ' + str(self.wallet.holdings['b']) + ', price: ' + str(ticker_data_b['avg_price']))
 
-                time.sleep(60*5)
+                time.sleep(60)
             # except:
             #     time.sleep(60)
             #     continue

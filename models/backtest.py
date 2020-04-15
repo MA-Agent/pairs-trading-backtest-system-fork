@@ -79,6 +79,15 @@ class Backtest:
 
     def run(self, pairs):
         for pair, vals in pairs.items():
+
+            with open('backtest_results.json', 'r') as f:
+                results_list = json.load(f)
+                for result in results_list:
+                    print(result['pair'], pair)
+                    if result['pair'] == pair:
+                        print("Pair is already processed: ", pair)
+                        continue
+
             # prices_a, prices_b = helper.generate_coint_series()
             prices_a = vals['prices_a']
             prices_b = vals['prices_b']
@@ -95,10 +104,13 @@ class Backtest:
                 hedge = helper.simple_hedge(subset_prices_a, subset_prices_b)
                 spreads = helper.simple_spreads(subset_prices_a, subset_prices_b, 0)
                 zscore = helper.simple_zscore(spreads)
-
-                p_val = CointegrationService().p_value(
-                    subset_prices_a, subset_prices_b
-                )
+                try:
+                    p_val = CointegrationService().p_value(
+                        subset_prices_a, subset_prices_b
+                    )
+                except:
+                    print('bug in coin')
+                    continue
 
                 if helper.currently_trading(self.current_trade):
                     self.close_trade(
@@ -117,20 +129,21 @@ class Backtest:
                         hedge
                     )
 
-                self.rolling_holdings.append(self.wallet.holdings['btc'])
-
-                print('holdings (BTC): ', self.wallet.holdings['btc'])
-                print('holdings (Asset A): ', self.wallet.holdings['a'])
-                print('holdings (Asset B): ', self.wallet.holdings['b'])
-                print('zscore:', zscore)
-                print('hedge:', hedge)
-                print('-'*20)
-                print()
+                # self.rolling_holdings.append(self.wallet.holdings['btc'])
+                if self.wallet.holdings['a'] != 0:
+                    print(pair, i, len(prices_a))
+                    print('holdings (BTC): ', self.wallet.holdings['btc'])
+                    print('holdings (Asset A): ', self.wallet.holdings['a'], subset_prices_a.iloc[-1])
+                    print('holdings (Asset B): ', self.wallet.holdings['b'], subset_prices_b.iloc[-1])
+                    print('zscore:', zscore)
+                    print('hedge:', hedge)
+                    print('-'*20)
+                    print()
 
             result = {
                 'pair': pair,
                 'holdings': self.wallet.holdings['btc'],
-                'rolling_holdings': self.rolling_holdings,
+                # 'rolling_holdings': self.rolling_holdings,
                 'avg_ratio': vals['avg_ratio'],
                 'num_trades': self.num_trades
             }

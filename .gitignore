@@ -7,3 +7,4 @@ backtest_results.json
 realtime_results.json
 binance_api_details.odt
 coint_results.json
+.DS_Store
