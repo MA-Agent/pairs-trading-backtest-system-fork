@@ -94,7 +94,7 @@ def build_trade(price_a, price_b, hedge, type):
     }
 
 def is_cointegrated(asset_a, asset_b):
-    with open('coinitegrated.json') as f:
+    with open('cointegrated.json') as f:
         list = cointegrated_pairs = f.read().splitlines()
 
         return asset_a+'|'+asset_b in list
