@@ -137,6 +137,7 @@ class Realtime:
                         ticker_data_b,
                         hedge
                     )
+                    send_telegram(asset_a + '|' + asset_b + ', holding: ' + str(self.wallet.holdings['btc']) + ', num_trades: ' + str(self.num_trades) + ', ' + asset_a +': ' + str(self.wallet.holdings['a']) + ', price: ' + str("%.8f" % ticker_data_a['avg_price']) + ', ' + asset_a +': ' + str(self.wallet.holdings['b']) + ', price: ' + str("%.8f" % ticker_data_b['avg_price']))                        
                 else:
                     self.open_trade(
                         p_val,
@@ -169,8 +170,6 @@ class Realtime:
                     # results_list.append(result)
                 # with open('realtime_results.json', 'w') as f:
                     # json.dump(results_list, f)
-                if  self.wallet.holdings['a'] != 0: 
-                    send_telegram(result['pair'] + ', holding: ' + str(result['holdings']) + ', num_trades: ' + str(result['num_trades']) + ', ' + asset_a +': ' + str(self.wallet.holdings['a']) + ', price: ' + str("%.8f" % ticker_data_a['avg_price']) + ', ' + asset_a +': ' + str(self.wallet.holdings['b']) + ', price: ' + str("%.8f" % ticker_data_b['avg_price']))
 
                 time.sleep(60)
             # except:
