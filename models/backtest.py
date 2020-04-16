@@ -133,8 +133,8 @@ class Backtest:
                 if self.wallet.holdings['a'] != 0:
                     print(pair, i, len(prices_a))
                     print('holdings (BTC): ', self.wallet.holdings['btc'])
-                    print('holdings (Asset A): ', self.wallet.holdings['a'], subset_prices_a.iloc[-1])
-                    print('holdings (Asset B): ', self.wallet.holdings['b'], subset_prices_b.iloc[-1])
+                    print('holdings (Asset A): ', self.wallet.holdings['a'], "%.8f" % subset_prices_a.iloc[-1])
+                    print('holdings (Asset B): ', self.wallet.holdings['b'], "%.8f" % subset_prices_b.iloc[-1])
                     print('zscore:', zscore)
                     print('hedge:', hedge)
                     print('-'*20)

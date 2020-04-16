@@ -30,6 +30,7 @@ class PairSelectionService:
     def selected(self, asset_prices, possible_pairs):
         selected_pairs = {}
         cointegrated_pairs = []
+        
         with open('cointegrated.json', 'r+') as f:
             # f.write(asset_a+'|'+asset_b+'\n')
             cointegrated_pairs = f.read().splitlines()
