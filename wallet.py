@@ -1,5 +1,6 @@
 import numpy as np
 from binance.client import Client
+from  helpers.model_helper import send_telegram
 import settings
 
 class Wallet:
@@ -8,7 +9,7 @@ class Wallet:
         self.fee = 0.075/100
         self.paper = paper
         self.holdings = {
-            'btc': 100.0,
+            'btc': 2.0,
             'a': 0,
             'b': 0
         }
@@ -21,8 +22,9 @@ class Wallet:
         # print(price * quantity * (1+self.fee))
         self.holdings['btc'] -= price * quantity * (1+self.fee) 
         self.holdings[asset] += quantity
-        send_telegram("Buy {:.2f} {} @ {:.8f}".format(quantity, asset, price)) 
+        
         if not self.paper:
+            send_telegram("Buy {:.2f} {} @ {:.8f}".format(quantity, asset, price)) 
             #buy
             return
 
@@ -30,8 +32,9 @@ class Wallet:
         # print(price * quantity * (1+self.fee))
         self.holdings['btc'] += price * quantity * (1-self.fee)
         self.holdings[asset] -= quantity
-        send_telegram("Sell {:.2f} {} @ {:.8f}".format(quantity, asset, price)) 
+        
         if not self.paper:
+            send_telegram("Sell {:.2f} {} @ {:.8f}".format(quantity, asset, price)) 
             # sell
             return
 

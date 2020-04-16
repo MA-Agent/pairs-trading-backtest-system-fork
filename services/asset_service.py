@@ -8,8 +8,9 @@ class AssetService:
         return pairs
 
     def all(self):
+        # return  ['ZECUSDT', 'XTZUSDT', 'XRPUSDT', 'XMRUSDT', 'XLMUSDT', 'VETUSDT', 'TRXUSDT', 'QTUMUSDT', 'ONTUSDT', 'NEOUSDT', 'LTCUSDT', 'LINKUSDT', 'IOTAUSDT', 'IOSTUSDT', 'ETHUSDT', 'ETCUSDT', 'EOSUSDT', 'DASHUSDT', 'BTCUSDT', 'BNBUSDT', 'BCHUSDT', 'BATUSDT', 'ATOMUSDT', 'ADAUSDT',]
         return ['BNBBTC', 'TRXBTC', 'XRPBTC', 'ETHBTC', 'EOSBTC', 'LINKBTC', 'ONTBTC', 'ADABTC', 'ETCBTC', 'LTCBTC', 'XLMBTC', 'XMRBTC', 'NEOBTC', 'ATOMBTC', 'DASHBTC', 'ZECBTC', 'MATICBTC', 'BATBTC', 'IOSTBTC', 'VETBTC', 'QTUMBTC', 'IOTABTC', 'XTZBTC', 'BCHBTC', 'RVNBTC']
-        # [
+        # all btc pairs [
         #     'ETHBTC',
         #     'LTCBTC',
         #     'BNBBTC',

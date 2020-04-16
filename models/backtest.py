@@ -57,13 +57,13 @@ class Backtest:
         #         return
         #     else:
         #         self.current_trade['non_coint_count'] += 1
-        if self.current_trade['type'] == 'short' and zscore < self.z_out_lower:
+        if self.current_trade['type'] == 'short' and (zscore < self.z_out_lower):
             self.wallet.sell('a', self.current_trade['quantity_a'], price_a)
             self.wallet.buy('b', self.current_trade['quantity_b'], price_b)
             self.current_trade = {}
             return
 
-        if self.current_trade['type'] == 'long' and zscore > self.z_out_upper:
+        if self.current_trade['type'] == 'long' and (zscore > self.z_out_upper):
             self.wallet.sell('b', self.current_trade['quantity_b'], price_b)
             self.wallet.buy('a', self.current_trade['quantity_a'], price_a)
             self.current_trade = {}
@@ -93,7 +93,8 @@ class Backtest:
             prices_b = vals['prices_b']
 
             self.setup_pass()
-
+            prev_trades = 0
+            prev_balance = 0
             for i in range(self.lookback_period, len(prices_a)):
                 subset_prices_a, subset_prices_b = helper.get_subset(
                     prices_a, prices_b, i, self.lookback_period
@@ -130,8 +131,9 @@ class Backtest:
                     )
 
                 # self.rolling_holdings.append(self.wallet.holdings['btc'])
-                if self.wallet.holdings['a'] != 0:
-                    print(pair, i, len(prices_a))
+
+                if prev_balance != self.wallet.holdings['a']:
+                    print(pair, i, len(prices_a), self.num_trades)
                     print('holdings (BTC): ', self.wallet.holdings['btc'])
                     print('holdings (Asset A): ', self.wallet.holdings['a'], "%.8f" % subset_prices_a.iloc[-1])
                     print('holdings (Asset B): ', self.wallet.holdings['b'], "%.8f" % subset_prices_b.iloc[-1])
@@ -139,6 +141,8 @@ class Backtest:
                     print('hedge:', hedge)
                     print('-'*20)
                     print()
+                    prev_trades = self.num_trades
+                    prev_balance = self.wallet.holdings['a']
 
             result = {
                 'pair': pair,

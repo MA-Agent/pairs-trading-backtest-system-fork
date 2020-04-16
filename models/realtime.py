@@ -25,7 +25,7 @@ class Realtime:
         self.price_service = PriceService()
 
     def setup_pass(self, asset_a, asset_b):
-        self.wallet = Wallet()
+        self.wallet = Wallet(paper=False)
         self.current_trade = {}
         self.pass_number = 0
         self.asset_a = asset_a
