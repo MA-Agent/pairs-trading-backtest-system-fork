@@ -17,7 +17,7 @@ class Wallet:
         self.loan = None
 
     def prepare_quantity(self, quantity, precision):
-            return "{:0.0{}f}".format(quantity, precision)
+            return "{:.0{}f}".format(quantity, precision)
 
     def buy(self, asset, quantity, price):
         # print(price * quantity * (1+self.fee))
@@ -31,11 +31,11 @@ class Wallet:
                 symbol=asset + 'BTC',
                 side='BUY',
                 type='MARKET',
-                quantity=self.prepare_quantity(self.prepare_quantity(quantity, 0)) * (1+self.fee) , 0))
+                quantity=self.prepare_quantity(quantity * (1+self.fee) , 0))
             print(order)
     
             if self.loan:
-                transaction = self.client().repay_margin_loan(asset=asset, amount=self.prepare_quantity(quantity, 0))* (1+self.fee) )
+                transaction = self.client().repay_margin_loan(asset=asset, amount=self.prepare_quantity(quantity, 0) )
                 print(transaction)
 
             return
@@ -49,7 +49,7 @@ class Wallet:
             send_telegram("Sell {:.2f} {} @ {:.8f}".format(quantity, asset, price)) 
             # sell
             if self.holdings[asset] < 0:
-                transaction = self.client().create_margin_loan(asset=asset, amount=self.prepare_quantity(quantity, 0)))
+                transaction = self.client().create_margin_loan(asset=asset, amount=self.prepare_quantity(quantity, 0))
                 print(transaction)
                 self.loan = transaction['tranId']
 
