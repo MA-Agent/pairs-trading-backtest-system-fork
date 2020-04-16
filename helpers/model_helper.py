@@ -74,7 +74,7 @@ def currently_trading(current_trade):
     # return (np.log(price_a) - hedge*np.log(price_b))-(np.log(previous_a) - hedge*np.log(previous_b))
 
 def trade_quantity_btc():
-    return 1.0
+    return 0.005
 
 def trade_quantity_asset(price):
     return trade_quantity_btc()/price

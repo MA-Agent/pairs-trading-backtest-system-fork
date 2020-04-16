@@ -25,11 +25,14 @@ class Realtime:
         self.price_service = PriceService()
 
     def setup_pass(self, asset_a, asset_b):
-        self.wallet = Wallet(paper=False)
+        
         self.current_trade = {}
         self.pass_number = 0
         self.asset_a = asset_a
+        self.asset_a_name = asset_a.split('BTC')[0]
         self.asset_b = asset_b
+        self.asset_b_name = asset_b.split('BTC')[0]
+        self.wallet = Wallet(self.asset_a_name, self.asset_b_name, paper=False)
         self.rolling_holdings = []
         self.num_trades = 0
 
@@ -43,8 +46,8 @@ class Realtime:
                 self.current_trade = helper.build_trade(
                     price_a, price_b, hedge, 'short'
                 )
-                self.wallet.sell('b', self.current_trade['quantity_b'], price_b)
-                self.wallet.buy('a', self.current_trade['quantity_a'], price_a)
+                self.wallet.sell(self.asset_b_name, self.current_trade['quantity_b'], price_b)
+                self.wallet.buy(self.asset_a_name, self.current_trade['quantity_a'], price_a)
                 self.num_trades += 1
                 return
 
@@ -56,8 +59,8 @@ class Realtime:
                 self.current_trade = helper.build_trade(
                     price_a, price_b, hedge, 'long'
                 )
-                self.wallet.sell('a', self.current_trade['quantity_a'], price_a)
-                self.wallet.buy('b', self.current_trade['quantity_b'], price_b)
+                self.wallet.sell(self.asset_a_name, self.current_trade['quantity_a'], price_a)
+                self.wallet.buy(self.asset_b_name, self.current_trade['quantity_b'], price_b)
                 self.num_trades += 1
                 return
 
@@ -76,8 +79,8 @@ class Realtime:
             price_a = ticker_data_a['bid']
             price_b = ticker_data_b['ask']
 
-            self.wallet.sell('a', self.current_trade['quantity_a'], price_a)
-            self.wallet.buy('b', self.current_trade['quantity_b'], price_b)
+            self.wallet.sell(self.asset_a_name, self.current_trade['quantity_a'], price_a)
+            self.wallet.buy(self.asset_b_name, self.current_trade['quantity_b'], price_b)
 
             self.current_trade = {}
             return
@@ -86,8 +89,8 @@ class Realtime:
             price_a = ticker_data_a['ask']
             price_b = ticker_data_b['bid']
 
-            self.wallet.sell('b', self.current_trade['quantity_b'], price_b)
-            self.wallet.buy('a', self.current_trade['quantity_a'], price_a)
+            self.wallet.sell(self.asset_b_name, self.current_trade['quantity_b'], price_b)
+            self.wallet.buy(self.asset_a_name, self.current_trade['quantity_a'], price_a)
 
             self.current_trade = {}
             return
@@ -97,14 +100,14 @@ class Realtime:
             price_a = ticker_data_a['bid']
             price_b = ticker_data_b['ask']
 
-            self.wallet.sell('a', self.current_trade['quantity_a'], price_a)
-            self.wallet.buy('b', self.current_trade['quantity_b'], price_b)
+            self.wallet.sell(self.asset_a_name, self.current_trade['quantity_a'], price_a)
+            self.wallet.buy(self.asset_b_name, self.current_trade['quantity_b'], price_b)
         else:
             price_a = ticker_data_a['ask']
             price_b = ticker_data_b['bid']
 
-            self.wallet.sell('b', self.current_trade['quantity_b'], price_b)
-            self.wallet.buy('a', self.current_trade['quantity_a'], price_a)
+            self.wallet.sell(self.asset_b_name, self.current_trade['quantity_b'], price_b)
+            self.wallet.buy(self.asset_a_name, self.current_trade['quantity_a'], price_a)
 
     def run(self, asset_a, asset_b):
         self.setup_pass(asset_a, asset_b)
@@ -149,11 +152,14 @@ class Realtime:
 
                 self.pass_number += 1
                 self.rolling_holdings.append(self.wallet.holdings['btc'])
+                
+                # self.wallet.sell(self.asset_b_name, 1000, ticker_data_b['avg_price'])
+                # self.wallet.buy(self.asset_b_name, 1000, ticker_data_b['avg_price'])
 
                 print('pass ' + str(self.pass_number))
                 print('holdings (BTC): ', self.wallet.holdings['btc'])
-                print('holidings (Asset A): ', self.wallet.holdings['a'], "%.8f" % ticker_data_a['avg_price'])
-                print('holidings (Asset B): ', self.wallet.holdings['b'], "%.8f" % ticker_data_b['avg_price'])
+                print('holidings (Asset '+ self.asset_a_name +'): ', self.wallet.holdings[self.asset_a_name], "%.8f" % ticker_data_a['avg_price'])
+                print('holidings (Asset '+ self.asset_b_name + '): ', self.wallet.holdings[self.asset_b_name], "%.8f" % ticker_data_b['avg_price'])
                 print('zscore:', zscore)
                 print('hedge:', hedge)
                 print('-'*20)
@@ -166,7 +172,7 @@ class Realtime:
                     'timestamp': datetime.datetime.now().timestamp()
                 }
                 if prev_trades != self.num_trades:
-                    send_telegram(asset_a + '|' + asset_b + ', holding: ' + str(self.wallet.holdings['btc']) + ', num_trades: ' + str(self.num_trades) + ', ' + asset_a +': ' + str(self.wallet.holdings['a']) + ', price: ' + str("%.8f" % ticker_data_a['avg_price']) + ', ' + asset_a +': ' + str(self.wallet.holdings['b']) + ', price: ' + str("%.8f" % ticker_data_b['avg_price']))                        
+                    send_telegram(asset_a + '|' + asset_b + ', holding: ' + str(self.wallet.holdings['btc']) + ', num_trades: ' + str(self.num_trades) + ', ' + self.asset_a_name +': ' + str(self.wallet.holdings[self.asset_a_name]) + ', price: ' + str("%.8f" % ticker_data_a['avg_price']) + ', ' + self.asset_b_name +': ' + str(self.wallet.holdings[self.asset_b_name]) + ', price: ' + str("%.8f" % ticker_data_b['avg_price']))                        
                     prev_trades = self.num_trades
 
                 # with open('realtime_results.json', 'r') as f:
@@ -174,6 +180,7 @@ class Realtime:
                     # results_list.append(result)
                 # with open('realtime_results.json', 'w') as f:
                     # json.dump(results_list, f)
+
 
                 time.sleep(60)
             # except:
