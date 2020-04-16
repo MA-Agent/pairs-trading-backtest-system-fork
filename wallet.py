@@ -24,6 +24,7 @@ class Wallet:
         send_telegram("Buy {:.2f} {} @ {:.8f}".format(quantity, asset, price)) 
         if not self.paper:
             #buy
+            return
 
     def sell(self, asset, quantity, price):
         # print(price * quantity * (1+self.fee))
@@ -32,6 +33,7 @@ class Wallet:
         send_telegram("Sell {:.2f} {} @ {:.8f}".format(quantity, asset, price)) 
         if not self.paper:
             # sell
+            return
 
     def client(self):
         return Client(
