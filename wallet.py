@@ -14,7 +14,9 @@ class Wallet:
         }
         self.holdings[pair1] = 0
         self.holdings[pair2] = 0
-        self.loan = None
+        self.loan = {}
+        self.loan[pair1] = None
+        self.loan[pair2] = None
 
     def prepare_quantity(self, quantity, precision):
             return "{:.0{}f}".format(quantity, precision)
@@ -34,8 +36,9 @@ class Wallet:
                 quantity=self.prepare_quantity(quantity * (1+self.fee) , 0))
             print(order)
     
-            if self.loan:
+            if self.loan[asset]:
                 transaction = self.client().repay_margin_loan(asset=asset, amount=self.prepare_quantity(quantity, 0) )
+                self.loan[asset] = None
                 print(transaction)
 
             return
@@ -51,7 +54,7 @@ class Wallet:
             if self.holdings[asset] < 0:
                 transaction = self.client().create_margin_loan(asset=asset, amount=self.prepare_quantity(quantity, 0))
                 print(transaction)
-                self.loan = transaction['tranId']
+                self.loan[asset] = transaction['tranId']
 
             order = self.client().create_margin_order(
                 symbol=asset + 'BTC',
