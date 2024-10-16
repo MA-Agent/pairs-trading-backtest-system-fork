@@ -134,8 +134,15 @@ class Backtest:
                 'avg_ratio': vals['avg_ratio'],
                 'num_trades': self.num_trades
             }
-            with open('backtest_results.json', 'r') as f:
-                results_list = json.load(f)
-                results_list.append(result)
+            
+            # Create the file if it doesn't exist and initialize with an empty list
+            try:
+                with open('backtest_results.json', 'r') as f:
+                    results_list = json.load(f)
+            except FileNotFoundError:
+                results_list = []
+
+            results_list.append(result)
+            
             with open('backtest_results.json', 'w') as f:
                 json.dump(results_list, f)

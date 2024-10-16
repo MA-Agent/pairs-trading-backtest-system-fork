@@ -9,7 +9,7 @@ class CointegrationDetectionProcess:
     def run(self):
         while True:
             pair_names = []
-            selected_pairs = self.pair_selection_service.selected_pairs(
+            selected_pairs = self.pair_selection_service.from_live_candles(
                 1, '5m'
             )
             for pair in selected_pairs.keys():
